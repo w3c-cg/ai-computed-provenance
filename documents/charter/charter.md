@@ -7,7 +7,7 @@ Charter for approval.*
 * **This Charter:** {TBD: URI}
 * **Previous Charter:** None. This is the first Charter for this Community Group.
 * **Start Date:** {TBD: YYYY-MM-DD}
-* **Last Modified:** 2026-08-23
+* **Last Modified:** 2026-09-23
 
 ---
 
@@ -19,12 +19,14 @@ requires users to place blind faith in proprietary black boxes. This group stand
 paradigm shift: a machine-checked and cryptographically founded foundation that records
 exactly how every fact is known.
 
-By capturing this provenance, auditing any conclusion transforms from an act of trust into a
-transparent, independently reproducible process. The group operates on the core distinction
-that "Computed ≠ Asserted" — a system must prove it computed a result, rather than simply
-asserting it. Because you cannot outsource "is this true?" to a proprietary black box and
-have the answer carry independent weight, this verification layer must remain fundamentally
-neutral and immune to single-vendor enclosure.
+With that record, auditing a conclusion changes from an act of trust into a process a reader
+carries out independently: re-checking the proof where one exists, and otherwise seeing
+exactly which premises, and whose, the conclusion rests on. The group operates
+on the core distinction that "Computed ≠ Asserted" — the standing of a claim is computed from
+the evidence recorded for it, and never asserted by the party that produced it. Because you
+cannot outsource "is this true?" to a proprietary black box and have the answer carry
+independent weight, this verification layer must remain fundamentally neutral and immune to
+single-vendor enclosure.
 
 ### The problem the group addresses
 
@@ -37,17 +39,32 @@ sound.
 
 ### Computed and asserted
 
-The group works from a distinction between two kinds of record.
+The group works from a distinction between two ways a claim acquires standing.
 
-A system that **asserts** it computed a result makes a statement of the same kind as the
-result itself. A reader who doubts the result has equal reason to doubt the assertion, and
-checking either requires trusting the producer.
+A system that **asserts** the standing of a result — that it was verified, checked, or
+computed correctly — makes a statement of the same kind as the result itself. A reader who
+doubts the result has equal reason to doubt the assertion, and checking either requires
+trusting the producer.
 
-A system that **proves** it computed a result produces a different kind of object. The proof
-can be checked by a second party, and checking it does not require trusting the producer.
+A system that **computes** the standing of a result derives it from evidence held in the
+record. A second party holding the same record computes the same standing, and doing so does
+not require trusting the producer.
 
-The specifications this group develops define records of the second kind. Every other
-objective in this Charter follows from that distinction.
+Recorded evidence is of two kinds, and the difference between them matters as much as the
+first distinction.
+
+A **proof** establishes that a proposition holds. A second party holding the proof and a
+checker for its logic reaches the same verdict, without trusting the producer.
+
+A **record of grounds** establishes what a claim rests on: a dataset, an analysis plan, an
+assertion by an accountable party. It does not establish the claim. A second party can check
+that the record is well formed and can see exactly whom and what the claim relies on. A reader
+who doubts one of those premises must examine it directly; the record cannot do that on the
+reader's behalf.
+
+The specifications this group develops define records in which standing is computed rather
+than asserted, and in which a record of grounds cannot stand in for a proof. Every other
+objective in this Charter follows from these two distinctions.
 
 ### Neutrality
 
@@ -65,10 +82,12 @@ single party owns.
 The group has three objectives.
 
 1. **Define a data format** in which the way a fact is known forms part of the record, can be
-   checked by machine, and is independent of the tool that produced it.
+   checked by machine, and is independent of the tool that produced it. In this format a
+   proof and a record of grounds are different kinds of object.
 2. **Enable verification by a second party.** Any party holding a record and the relevant
-   specification can re-derive the recorded conclusions. No reader holds a privileged
-   position.
+   specification can re-check every proof the record contains, given a checker for the proof's
+   logic, and can re-derive the standing of every claim it records. No reader holds a
+   privileged position.
 3. **Support federation without a central authority.** The format accommodates multiple
    reasoning systems and multiple vocabularies, with no single party owning the vocabulary.
 
@@ -99,13 +118,18 @@ to be known in an AI-assisted scientific or technical workflow.
 Two use cases define the scope.
 
 **A single agent producing auditable work.** One automated system works against one record
-and proposes conclusions. Each conclusion carries a machine-checkable account of how it was
-produced. A reviewer holding the record and the specification re-derives the conclusion
-without access to the producing system.
+and proposes conclusions. Each conclusion carries a record of how it was produced and a
+machine-checkable account of what it rests on. A reviewer holding the record and the
+specification, without access to the producing system, re-checks every proof in that account
+and re-derives the conclusion's standing: which parts are proved, which rest on observations,
+and which rest on declarations by named parties.
 
 **A conclusion drawn across several reasoning systems.** A statistical result, a numerical
 bound, and a machine-checked proof each contribute to one conclusion. The record states which
-system established which part, and under which translation.
+system established which proposition, under which translation, and which declared premise,
+attributed to a named party, carries each of those propositions to the conclusion. A
+statistical test establishes a statement about a sample at a declared scope, not the domain
+claim it supports, and the record keeps the two apart.
 
 A third use case, in which several parties extend a shared corpus independently and then
 combine the results, falls within the group's interest but outside the first phase of work.
@@ -189,14 +213,41 @@ quantification, and a truth condition, and is not expressible as a single proper
 assignment.
 
 The format therefore carries propositions as terms of a dependent type theory, stored as
-ordinary content within the record and checked when written. The specification defines the
-term language, its encoding, the typing rules a conforming checker implements, and the point
-in the write path at which checking is REQUIRED.
+ordinary content within the record and checked when written.
+
+The unit that is checked is a **judgement**: a logic, a term, and a type, stating that the
+term inhabits the type in that logic. A bare term cannot always be checked, because its type
+cannot always be inferred from it. A judgement supplies the type, so every check runs against a
+stated type and no part of the record needs an exception. Naming the logic lets one form cover
+both the format's native theory and any external logic for which a checker is available.
+
+The specification defines the term language, its encoding, the judgement form, the typing
+rules a conforming checker implements, and the point in the write path at which checking is
+REQUIRED.
 
 The group does not define a reasoning engine. The statement language establishes what a
 statement is; it does not establish how any party decides whether that statement holds.
 
-#### Justification — Phase 1 for terms, categories, and records of execution within one context; Phase 2 for transport across a context boundary
+#### Provenance and warrant — Phase 1
+
+The format records two properties of a resource, and they answer different questions.
+**Provenance** records how a resource came to exist: what produced it, from what inputs, and
+by which activity. Every resource has provenance. **Warrant** records what evidence exists for
+the proposition a resource carries. Only a resource that carries a proposition has a warrant.
+For a vocabulary term or an imported concept, asking what proves it is a category error rather
+than an open question.
+
+The two are independent. A claim written by hand and accompanied by a checked proof is
+verified. A claim generated by a machine and carrying no proof is not. The origin of a claim
+does not change its warrant.
+
+W3C PROV standardizes provenance. The group maps the format's provenance records onto PROV-O
+rather than defining a competing model, and the specification defines that mapping. PROV
+deliberately treats an entity as opaque and does not model what the entity states. Warrant is
+a statement about exactly that content, so PROV cannot carry it. Warrant is what this group
+defines.
+
+#### Justification — Phase 1 for justification terms and the computation of warrant within one context; Phase 2 for transport across a context boundary
 
 The format represents justification following the approach of justification logic, in which
 "it is known that F" is replaced by "t is a justification for F". The justification is an
@@ -204,19 +255,50 @@ object within the language rather than metadata attached to it. A record carryin
 justification differs in kind from a record carrying only the statement, and the difference
 is checkable.
 
-The format assigns each recorded fact a warrant category from a small fixed set: declared,
-observed, derived, and verified. The category is **computed from** how the record came to
-exist. A conforming implementation MUST NOT permit a producer to assert a warrant category
-directly. A self-declared claim of verification is the practice these specifications are
-intended to make unnecessary.
+The format keeps proofs and records of grounds in separate layers. A proof is a judgement
+whose type is the proposition itself. A record of grounds is a justification term for the
+proposition, and it does not assert the proposition. A checker can verify that a justification
+term is well formed and grounds a claim to P, but that result is a judgement about the
+grounds, not about P. The specification MUST make it inexpressible, and not merely
+non-conforming, for a record of grounds to stand in for a proof of the proposition it grounds.
 
-Execution leaves a record of what was run, and a witness records what that execution
-establishes about a resource. The specification defines these as two views of one event
-rather than as independent metadata, which is what allows a reader to re-derive a warrant
-category.
+The leaves of a justification term are drawn from three grounds.
 
-The group defines the justification term language, the rules assigning warrant categories,
-and the structure of execution records and witnesses.
+* **Verified.** A checked judgement establishes the proposition itself.
+* **Observed.** A recording occurred: an instrument reading, a sample, the output of a model
+  run. What a recording establishes is narrower than the claims it supports. A party that
+  draws the wider claim supplies the premise that bridges the two.
+* **Declared.** A named, accountable party asserted the proposition. This establishes that
+  the assertion was made. Relying on it means trusting that party.
+
+Justification terms combine these leaves, for example by applying one justification to
+another. A conclusion obtained by applying an analysis plan to observed input rests on two
+grounds: a declaration that the plan denotes a function of its input, and the observation of
+that input. Such a conclusion is not verified, because the typing of the plan is declared
+rather than proved. The format records only the proposition that was actually established.
+Where the recorded conclusion is wider, the step between the two is a declared premise
+attributed to a party.
+
+The **warrant** of a claim is computed from its justification term and the evidence the term
+cites. It is not stored as a field and it is not supplied by the producer. A conforming
+implementation MUST NOT permit a producer to assert a warrant directly. A self-declared claim
+of verification is the practice these specifications are intended to make unnecessary.
+Because warrant is computed, it follows the record: when a declared premise is withdrawn,
+every conclusion resting on it loses that support without being edited. The specification
+states the record state against which a warrant is evaluated.
+
+A justification MUST be well founded: the support of a premise MUST NOT include that premise.
+This is a structural validation rule, checked when content is written.
+
+Execution leaves a record of what was run, and that record is provenance. Whether it is also
+evidence depends on the process. Where a plan is declared to be a function, its output
+follows from its input and the run adds nothing to the warrant. Where the process is
+stochastic, as with a model invocation or a laboratory assay, the recorded output is itself an
+observation.
+
+The group defines the judgement form, the justification term language, the three grounds and
+the rules computing warrant from them, the well-foundedness condition, and the structure of
+the records that witness each ground.
 
 #### Federated reasoning — Phase 1 for declaration surfaces; Phase 2 for translation between systems
 
@@ -235,6 +317,20 @@ dispatched.
 The group defines what a conforming reasoning system declares: its signature vocabulary, the
 shape of the queries it answers, and the verdicts it returns. The group also defines what a
 translation between two reasoning systems declares in order to be admissible.
+
+A reasoning system's authority is limited by what a reader can check. A system that supplies
+proof objects, for which a checker is available, can contribute verified claims. A system that
+returns only a verdict cannot. A verdict that a statement holds is evidence recorded together
+with its source, not a proof, and a claim resting on it is not verified. A reasoning system MAY
+refuse content on its own authority, because a wrongful refusal loses data rather than
+corrupting it. It MUST NOT establish a verified claim on its own authority. Whether a
+reasoning system can contribute verified claims is therefore an operational question: whether
+a reader can hold and re-check what it produced, not whether its logic meets a formal
+definition.
+
+A specification that defines how a claim becomes verified MUST state what a reader trusts in
+accepting it: the native checker, each external checker, each translation between reasoning
+systems, and the rules under which declarations and observations are admitted.
 
 The group notes a boundary. Defining a **declaration** surface is achievable in the first
 phase. Defining a **statement translation**, over which the satisfaction relation is stated,
@@ -267,15 +363,16 @@ Two questions determine the phase to which any work item belongs. First: how man
 produced the record? Second: must the guarantee survive a change of context?
 
 **Phase 1 — one producer, one context.** The representation, its canonical form and
-identifiers, structural validation, the statement language and its checking against the
-vocabulary in force where a statement is written, justification terms and warrant categories,
-and the declaration surfaces for reasoning systems and translations between them.
+identifiers, structural validation, the statement language and its judgements checked against
+the vocabulary in force where a statement is written, provenance and its mapping to PROV-O,
+justification terms and the computation of warrant from them, and the declaration surfaces
+for reasoning systems and translations between them.
 
 Phase 1 is a complete deliverable in itself. A single agent working against a single record
-never combines records with another party. It produces conclusions, each carrying a
-machine-checkable account of how it was produced. This addresses the distinction between
-computed and asserted results for the most common case, and it does not depend on the later
-phases.
+never combines records with another party. It produces conclusions, each carrying a record of
+how it was produced and a machine-checkable account of what it rests on. This addresses the
+distinction between computed and asserted standing for the most common case, and it does not
+depend on the later phases.
 
 **Phase 1.5 — several producers, unchanged meaning.** Combining independently produced
 records. This work is structural: it concerns which contributions survive combination and
@@ -303,8 +400,11 @@ that a guarantee extends further than the group has established. Three cases ari
   combined, or that its terms denote the same things.
 * A declared translation between reasoning systems is well formed. Phase 1 does not establish
   that what a receiving system produces is a translation of what the sending system provided.
-* A warrant category is computed from how a record came to exist within one context. Phase 1
-  does not establish that the category survives transport to another context.
+* A warrant is computed within one context. A proof in the format's native logic can be
+  re-checked in any context. A proof in another logic carries only as far as the translation
+  described in the previous item. A record of grounds does not carry at all: a reader in
+  another context must examine its premises afresh. Phase 1 does not establish that a warrant
+  resting on grounds survives transport to another context.
 
 ### Open questions
 
@@ -324,6 +424,14 @@ structure: a protocol that moves data, specified against a theory that operates 
    statement it justifies; and a treatment of approximate translation that constrains what a
    recipient may conclude, rather than only recording that the translation was approximate.
 
+   Where truth in both systems means having a proof, as in a type theory, the first component
+   reduces to a narrower condition: the translated statement has a proof exactly when the
+   original does. A checker for such a system accepts a proof only of a statement that holds,
+   so the soundness obligation falls entirely on the translation. This condition is easier to
+   exhibit than preservation of models, but it still cannot be checked by machine, because the
+   two proofs belong to different theories and the translation maps statements rather than
+   proofs.
+
 The group does not address either question in Phase 1.
 
 ### Existing implementation experience
@@ -337,6 +445,13 @@ who have no relationship to it.
 Two concepts listed above are not implemented in it. Statement translation between reasoning
 systems is not implemented and is not an implementation task, because no formulation exists to
 implement. Validation of a combined record is implemented only in part.
+
+The implementation's representation of justification changed after the first draft of this
+Charter. It previously assigned one of four warrant categories to each resource, based on the
+resource's class or the process that wrote it. It now computes warrant from three grounds and
+holds proofs and records of grounds as separate kinds of object. The group treats this change
+as evidence that the Phase 1 vocabulary is not yet settled, and as a source of specific
+failures the specification must exclude.
 
 ### Out of Scope
 
@@ -357,7 +472,8 @@ this Charter or a successor.
 * Reasoning engines, proof assistants, and type checkers as such. The group defines the
   records these systems produce and consume, not the systems.
 * Methods for ranking or scoring the trustworthiness of sources. The format records how a
-  fact is known. It does not evaluate whether a given source is reliable.
+  fact is known. It does not evaluate whether a given source is reliable. A declared ground
+  names the party a claim relies on; whether to rely on that party is the reader's decision.
 * Identity and credential systems. Where a record must name an actor, the format references
   existing work rather than defining a replacement.
 * Domain vocabularies. The group defines how vocabularies are imported and referenced, not
@@ -376,8 +492,9 @@ this Charter or a successor.
 
 **S1 — AI Computed Provenance Format.** A Community Group Report, normative in intent,
 covering the Phase 1 concepts: the graph and vocabulary layer, canonical encoding and content
-addressing, the statement language and its typing rules, justification terms and warrant
-categories, and the declaration surfaces for reasoning systems and translations between them.
+addressing, the statement language with its judgement form and typing rules, provenance and
+its mapping to PROV-O, justification terms and the computation of warrant, and the declaration
+surfaces for reasoning systems and translations between them.
 S1 does not cover the combination of independently produced records.
 
 Each part of S1 MUST carry its own conformance requirements, so that a partial implementation
@@ -412,7 +529,10 @@ The group intends to produce two.
 of what a deployment exposes in order for a third party to check its output, and which design
 choices prevent independent verification. The report identifies specific patterns to avoid,
 including verdicts whose inputs cannot be re-derived, canonical forms that depend on an
-unpublished implementation, and vocabulary extension points available to only one party.
+unpublished implementation, vocabulary extension points available to only one party, warrants
+stored as fields that can disagree with the evidence, claims recorded more broadly than what
+was established, and reasoning systems that collapse an analysis plan and its data into a
+single opaque ground.
 
 **R2 — Primer.** An introduction to the format for practitioners in scientific and technical
 fields who are not specialists in formal methods.
@@ -429,9 +549,12 @@ The group intends to produce a conformance test suite for S1, comprising:
 * end-to-end cases pairing a record with the result a conforming checker reaches.
 
 The suite MUST include cases that a conforming implementation fails if it presumes a guarantee
-the specification defers to a later phase. A test suite that cannot detect an implementation
-claiming more than the specification establishes does not test the boundaries this Charter
-defines.
+the specification defers to a later phase. It MUST also include cases that a conforming
+implementation fails if it lets a claim become verified without a checked judgement: a record
+of grounds offered as a proof, a warrant asserted by the producer, a verdict offered without a
+proof object, and a justification whose support is circular. A test suite that cannot detect
+an implementation claiming more than the specification establishes does not test the
+boundaries this Charter defines.
 
 The test suite MUST be executable against an implementation that the group does not maintain.
 
@@ -462,10 +585,11 @@ regarding Chair affiliation are the group's response to that concentration.
 
 The group depends on, or coordinates with, the following work.
 
-* **W3C Provenance (PROV-DM, PROV-O).** The most closely related work. PROV provides a
-  vocabulary for describing derivations. This group specifies records that allow a second
-  party to check a derivation. The two are complementary. The group intends to propose a
-  liaison.
+* **W3C Provenance (PROV-DM, PROV-O).** The most closely related work. The format's
+  provenance records map onto PROV-O, and the specification defines that mapping. PROV treats
+  an entity as opaque and does not model what it states. This group specifies warrant, which
+  concerns exactly that content and which PROV cannot represent. The two are complementary.
+  The group intends to propose a liaison.
 * **RDF, RDF-star, JSON-LD, and SHACL.** Adopted by reference for serialization and shape
   constraints.
 * **Verifiable Credentials and Decentralized Identifiers.** Adopted by reference where a
@@ -637,9 +761,15 @@ Phase 1.5 is not a prerequisite for Phase 2.
 
 ## **Appendix: Glossary of Mathematical Terms**
 
-This glossary provides high-level definitions of the mathematical and categorical concepts referenced in the scope of this Charter. It is intended to assist stakeholders in understanding the formal mechanisms underpinning the specification.
+This glossary provides high-level definitions of the mathematical, logical, and categorical concepts referenced in the scope of this Charter. It is intended to assist stakeholders in understanding the formal mechanisms underpinning the specification.
 
 * **Comorphism:** A translation mechanism between two different logical systems. It maps the rules and statements of one system into another, allowing them to exchange conclusions while preserving their strict mathematical meaning.  
+* **Factive:** A property of evidence. Evidence is factive if its existence entails that the proposition it concerns holds. A checked proof is factive; a record of grounds is not.  
 * **Grothendieck Construction:** A mechanism for unifying multiple distinct reasoning systems into a single interface. It enables a participant or automated system to dispatch queries across various logical frameworks simultaneously.  
+* **Ground:** One of three kinds of support at the leaves of a justification term: verified (a checked proof of the proposition itself), observed (a recording occurred), and declared (a named party asserted the proposition).  
+* **Judgement:** A checked statement that a term inhabits a type in a named logic. When the type is a proposition, a judgement records that a checker verified a proof of it.  
+* **Justification Term:** A structured object recording the grounds on which a claim rests and how they combine. It is not factive: it records what a claim rests on without asserting the claim.  
+* **Provenance:** The record of how a resource came to exist. Every resource has provenance. It is independent of warrant and maps onto W3C PROV.  
 * **Pushout of a Span:** A categorical structure used to mathematically model the combination of records. When two parties independently extend a shared record, they create two divergent branches from a common ancestor; the pushout defines the blueprint for a logically consistent merge that preserves new information and resolves structural conflicts without violating underlying constraints.  
-* **Theory of Institutions:** A formal framework used to define what constitutes a "logic". Because different scientific domains use fundamentally different logics to establish facts (e.g., statistical tests versus mathematical proofs), this theory provides a neutral foundation for safely relating and comparing these varying systems.
+* **Theory of Institutions:** A formal framework used to define what constitutes a "logic". Because different scientific domains use fundamentally different logics to establish facts (e.g., statistical tests versus mathematical proofs), this theory provides a neutral foundation for safely relating and comparing these varying systems.  
+* **Warrant:** The standing of a claim, computed from its justification term: which parts are proved, which rest on observations, and which rest on declarations by named parties. A warrant is never stored or asserted.
